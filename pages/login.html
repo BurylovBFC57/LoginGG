@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="../js/tailwindcss.js"></script>
+    <script src="../js/alpine.js" defer></script>
+</head>
+<body x-data="{
+    host: 'https://test.informat74.ru/api',
+    errors: {},
+    message: null,
+    async login(){
+        let response = await fetch(`${this.host}/login`,{
+            method: 'POST',
+            body: new FormData($refs.login)
+        })
+
+        response = await response.json()
+        
+        if(!response.error){
+            
+            localStorage.setItem('user', JSON.stringify(response.user) )
+            localStorage.setItem('token', JSON.stringify(response.token) )
+            location.assign('admin.html')
+        }else{
+            if(response.errors != undefined){
+                this.errors = response.errors
+            }
+            if(response.message != undefined){
+                this.message = response.message
+        }
+
+    }
+}
+}">
+    <header class="grid grid-cols-[auto_1fr_auto] bg-cyan-500 text-white py-2 px-2 md:px-[6%]">
+        <a href="../index.html">Logo</a>
+        <nav class="justify-self-center space-x-6">
+            <a href="admin.html">Admin Panel</a>
+            <a href="user.html">User Panel</a>
+        </nav>
+        <ul class="flex gap-x-6">
+            <li><a href="register.html">Register</a></li>
+            <li><a href="#">Login</a></li>
+            <li><a href="">Exit</a></li>
+        </ul>
+    </header>
+    <main class="py-8 px-2 md:px-[6%]">
+        <h1 class="text-3xl font-bold">Login</h1>
+        <section class="grid md:grid-cols-2 py-6 gap-x-2">
+            <div class="bg-cyan-500 text-white grid justify-center items-center">
+                <h2 class="text-2xl font-bold p-2">Login Form</h2>
+            </div>
+            <form action="" class="space-y-6" x-on:submit.prevent="login()" x-ref="login">
+                <div class="grid">
+                    <input type="text" class="border-b p-1" name="email" placeholder="you email">
+                    <template x-for="error in errors.email">
+                        <span class="text-red-500" x-text="error"></span>
+                    </template>
+                    
+                </div>
+                <div class="grid">
+                    <input type="text" class="border-b p-1" name="password" placeholder="you password">
+                    <template x-for="error in errors.password">
+                        <span class="text-red-500" x-text="error"></span>
+                    </template>
+                    
+                </div>
+                <div class="grid">
+                    <button type="submit" class="bg-cyan-500 text-white p-2 cursor-pointer">Login</button>
+                </div>
+            </form>
+        </section>
+    </main>
+</body>
+</html>
