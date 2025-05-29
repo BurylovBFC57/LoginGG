@@ -7,21 +7,89 @@
     <script src="../js/tailwindcss.js"></script>
     <script src="../js/alpine.js" defer></script>
 </head>
-<body x-data="">
-    <header class="grid grid-cols-[auto_1fr_auto] bg-cyan-500 text-white py-2 px-2 md:px-[6%]">
-        <a href="../index.html">Logo</a>
-        <nav class="justify-self-center space-x-6">
-            <a href="pages/admin.html">Admin Panel</a>
-            <a href="pages/user.html">User Panel</a>
-        </nav>
-        <ul class="flex gap-x-6">
-            <li><a href="#">Register</a></li>
-            <li><a href="login.html">Login</a></li>
-            <li><a href="">Exit</a></li>
-        </ul>
-    </header>
-    <main class="py-8 px-2 md:px-[6%]">
-        <h1 class="text-3xl font-bold">Register</h1>
-    </main>
+<body x-data="
+{
+  host: 'https://test.informat74.ru/api',
+  errors: {},
+  message: null,
+  async register(){
+    let response = await fetch(`${this.host}/register`,{
+      method: 'POST',
+      body: new FormData($refs.login)
+    })
+    response = await response.json()
+    console.log(response)
+    if(!response.error){
+      localStorage.setItem('user', JSON.stringify(response.user) )
+      localStorage.setItem('token', response.token )
+      if(response.user.role == 'admin'){
+        location.assign('admin.html')
+      }else{
+        location.assign('user.html')
+      }
+    }
+    if(response.errors!=undefined){
+      this.errors = response.errors
+    }
+    if(response.message != undefined){
+      this.message = response.message
+    }
+  }
+}">
+
+  <header class="grid grid-cols-[auto_1fr_auto] bg-cyan-500 text-white py-2 px-2 md:px-[6%]">
+    <a href="../index.html">api<span class="font-bold">POST</span> </a>
+    <nav class="justify-self-center space-x-4">
+
+    </nav>
+    <ul class="flex gap-x-4">
+        <li><a href="#">Register</a></li>
+        <li><a href="login.html">Login</a></li>
+
+    </ul>
+  </header>
+  <main class="grid gap-y-8 py-8 px-2 md:px-[6%]">
+    <h1 class="text-3xl font-bold">Register</h1>
+    <section class="grid md:grid-cols-2 py-6 gap-x-2 bg-cyan-100">
+        <div class="grid bg-cyan-500 text-white justify-items-center items-center rounded-sm">
+            <h2 class="text-2xl font-bold">Register form</h2>
+            <span class="text-red-400 text-xl" x-text="message"></span>
+        </div>
+        <form class="space-y-4" x-ref="login" x-on:submit.prevent="register()" enctype="multipart/form-data">
+            <div class="grid">
+                <label for="name" class="font-bold">Name</label>
+                <input class="border-b" type="text" name="name" id="name">
+                <template x-for="error in errors.name">
+                  <span class="text-red-400 text-sm" x-text="error"></span>
+                </template>
+            </div>
+            <div class="grid">
+                <label for="email" class="font-bold">Email</label>
+                <input class="border-b" type="text" name="email" id="email">
+                <template x-for="error in errors.email">
+                  <span class="text-red-400 text-sm" x-text="error"></span>
+                </template>
+            </div>
+            <div class="grid">
+                <label for="password" class="font-bold">Password</label>
+                <input class="border-b" type="text" name="password" id="password">
+                <template x-for="error in errors.password">
+                  <span class="text-red-400 text-sm" x-text="error"></span>
+                </template>
+            </div>
+
+            <div class="grid">
+                <label for="avatar" class="font-bold cursor-pointer">Avatar</label>
+                <input class="border-b hidden " type="file" name="avatar" id="avatar">
+                <template x-for="error in errors.avatar">
+                  <span class="text-red-400 text-sm" x-text="error"></span>
+                </template>
+            </div>
+            <div class="grid">
+                <button class="bg-cyan-500 text-white p-2 cursor-pointer rounded-sm">Register</button>
+            </div>
+        </form>
+    </section>
+  </main>
 </body>
 </html>

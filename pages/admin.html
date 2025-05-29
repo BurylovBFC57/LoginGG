@@ -8,45 +8,181 @@
     <script src="../js/alpine.js" defer></script>
 </head>
 <body x-data="{
-    user: JSON.parse(localStorage.getItem('user')),
-    token: JSON.parse(localStorage.getItem('token')),
-
+    host: 'https://test.informat74.ru/api',
+    user: JSON.parse(localStorage.getItem('user')) ,
+    token: localStorage.getItem('token'),
     logout(){
-        localStorage.removeItem('user')
-        localStorage.removeItem('token')
-        location.assign('../index.html')
+      localStorage.clear()
+      location.assign('../index.html')
+    },
+    funcIsUsers(){
+        this.isUsers = true
+        this.isCategories = false
+    },
+    funcIsCategories(){
+        this.isCategories = true
+        this.isUsers = false
     }
-
-}">
+  }">
     <header class="grid grid-cols-[auto_1fr_auto] bg-cyan-500 text-white py-2 px-2 md:px-[6%]">
-        <a href="../index.html">Logo</a>
-        <nav class="justify-self-center space-x-6">
-            <a href="#">Admin Panel</a>
-        </nav>
-        <ul class="flex gap-x-6">
-            <li><a href="" x-on:click.prevent="logout()">Exit</a></li>
-        </ul>
+      <a href="../index.html">api<span class="font-bold">POST</span> </a>
+      <nav class="justify-self-center space-x-4">
+          <a href="">AdminPanel</a>
+      </nav>
+      <ul class="flex gap-x-4">
+          <li><a href="" x-on:click.prevent="logout()">Exit</a></li>
+      </ul>
     </header>
-    <main class="py-8 px-2 md:px-[6%]">
-        <h1 class="text-3xl font-bold">Admin</h1>
+    <main class="grid gap-y-8 py-8 px-2 md:px-[6%]">
+      <h1 class="text-3xl font-bold">AdminPanel</h1>
+      <section class="grid grid-cols-1 md:grid-cols-[1fr_3fr] gap-x-4 bg-cyan-100 p-4">
+        <img x-bind:src="user.avatar" alt="" class="object-cover h-full w-full rounded-sm border-6 border-cyan-500">
+        <ul class="self-center">
+          <template x-for="(item,key) in user">
+            <li class="flex gap-x-2" x-show="key != 'avatar'">
+              <h3 x-text="key" class="font-bold"></h3>
+              <span x-text="item"></span>
+            </li>
+          </template>
+          <li class="flex gap-x-2">
+              <h3 x-text="'Token'" class="font-bold"></h3>
+              <span x-text="token"></span>
+            </li>
+        </ul>
+      </section>
+        <section>
+            <h2 class="text-2xl font-bold">Tabs</h2>
+            <ul class="flex gap-x-4">
+                <li
+                x-on:click="funcIsUsers()"
+                class="text-xl font-bold cursor-pointer p-2 rounded"
+                x-bind:class="isUsers ? 'border border-b-white' : 'text-gray-400'"
+                >
+                    <h3 class="text-xl font-bold cursor-pointer">Users</h3>
+                </li>
+                <li
+                x-on:click="funcIsCategories()"
+                class="text-xl font-bold cursor-pointer p-2 rounded"
+                x-bind:class="isCategories ? 'border border-b-white' : 'text-gray-400'"
+                >
+                    <h3 class="text-xl font-bold cursor-pointer">Categories</h3>
+                </li>
+            </ul>
+            <ul class="border p-2 rounded-sm">
+                <li x-show="isUsers" class="grid gap-y-6"
+                x-data="{
+                    users: {},
+                    async download(){
+                        let response = await fetch(`${host}/users`)
+                        response = await response.json()
+                        console.log(response)
+                    }
+                }"
+                >
+                    <h4 class="font-bold">All Users</h4>
+                <button
+                x-on:click="download()"
+                class="bg-cyan-500 text-white font-bold px-6 py-2 rounded cursor-pointer">Download</button>
+                <div>
+                    <ul class="grid grid-cols-4 border-b-gray-400 p-2 ">
+                        <li class="font-bold">id</li>
+                        <li class="font-bold">name</li>
+                        <li class="font-bold">email</li>
+                        <li class="font-bold">role</li>
+                    </ul>
+                    <ul class="grid grid-cols-4 p-2">
+                        <li>yrjtndfd</li>
+                        <li>namnxczdfe</li>
+                        <li>vxzsdf</li>
+                        <li>pzkdxjhgweg</li>
+                    </ul>
+                    <ul class="grid grid-cols-4 p-2 bg-cyan-100">
+                        <li>yrjtndfd</li>
+                        <li>namnxczdfe</li>
+                        <li>vxzsdf</li>
+                        <li>pzkdxjhgweg</li>
+                    </ul>
+                    <ul class="grid grid-cols-4 p-2">
+                        <li>yrjtndfd</li>
+                        <li>namnxczdfe</li>
+                        <li>vxzsdf</li>
+                        <li>pzkdxjhgweg</li>
+                    </ul>
+                    <ul class="grid grid-cols-4 p-2 bg-cyan-100">
+                        <li>yrjtndfd</li>
+                        <li>namnxczdfe</li>
+                        <li>vxzsdf</li>
+                        <li>pzkdxjhgweg</li>
+                    </ul>
+                </div>
+                </li>
+                <li
+                x-data="{
+                    count: 10,
+                    pages: 0,
+                    curentPage: 0,
+                    categories: {},
+                    async download(){
+                        let response = await fetch(`${host}/categories`)
+                        response = await response.json()
+                        this.categories = response.data
 
-        <section class="grid md:grid-cols-2 gap-x-2">
-            <img x-bind:src="user.avatar" alt="" class="object-cover h-full w-full">
-            <ul class="self-center space-y-4">
-                <template x-for="(item, key) in user">
-                    <li class="flex gap-x-4 " x-show="key == 'avatar">
-                        <h3 x-text="key" class="text-xl font-bold"></h3>
-                        <span x-text="item"></span>
-                    </li>
+                        if(this.categories.length % this.count != 0){
+                            this.pages = Math.floor(this.categories.length / this.count) + 1
+                        }else{
+                            this.pages = Math.floor(this.categories.length / this.count)
+                        }
+
+                        
+                    },
+                    paginator(start){
+                        return this.categories.slice(start*this.count, start*this.count+this.count)
+                    }
+                }"
+                x-show="isCategories" class="grid gap-y-6">
+                    <h4 class="font-bold">All Categories</h4>
+                <button class="bg-cyan-500 text-white font-bold px-6 py-2 rounded cursor-pointer"
+                x-on:click="download()"
+                >Download</button>
+                <div class="grid grid-cols-[3fr_1fr]">
+                    <ul class="flex gap-x-2">
+                        <template x-for="item in pages">
+                            <li
+                            x-on:click="curentPage = item-1"
+                            x-bind:class="curentPage == item - 1 ? 'border-2 bg-white text-cyan-500 ' : 'text-white bg-cyan-500'"
+                            class="text-2xl font-bold h-10 w-10 grid items-center justify-items-center rounded-[100%] cursor-pointer ">
+                                <span x-text="item-1"></span>
+                            </li>                            
+                        </template>
+                    </ul>
+                        <div x-show="categories.length>0">
+                    <span>Количество записей при выводе:</span>
+                    <select x-model="count" class="border-1">
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                        <option value="30">30</option>
+                    </select>
+                        </div>
+                </div>
+                <div>
+                    <ul class="grid grid-cols-3 border-b-gray-400 p-2 ">
+                        <li class="font-bold">key</li>
+                        <li class="font-bold">id</li>
+                        <li class="font-bold">name</li>
+                    </ul>
+                    <template x-for="(category, key) in paginator(curentPage)" x-bind:key="catefory.id">
+                    <ul
+                    x-bind:class="(key+1)%2 == 0 ? 'bg-cyan-100' : ''"
+                    class="grid grid-cols-3 p-2 hover:text-white hover:bg-gray-500">
+                        <li x-text="key+1"></li>
+                        <li x-text="category.id"></li>
+                        <li x-text="category.name"></li>
+                    </ul>
                 </template>
-                    <li class="flex gap-x-4">
-                        <h3 x-text="'Token'" class="text-xl font-bold"></h3>
-                        <span x-text="token"></span>
-                    </li>
-                
+                </div>
+                </li>
             </ul>
         </section>
-
     </main>
 </body>
 </html>
