@@ -39,8 +39,6 @@
     <header class="grid grid-cols-[auto_1fr_auto] bg-cyan-500 text-white py-2 px-2 md:px-[6%]">
         <a href="../index.html">api<span class="font-bold">POST</span> </a>
         <nav class="justify-self-center space-x-6">
-            <a href="admin.html">Admin Panel</a>
-            <a href="user.html">User Panel</a>
         </nav>
         <ul class="flex gap-x-6">
             <li><a href="register.html">Register</a></li>
@@ -55,14 +53,16 @@
             </div>
             <form action="" class="space-y-6" x-on:submit.prevent="login()" x-ref="login">
                 <div class="grid">
-                    <input type="text" class="border-b p-1" name="email" placeholder="you email">
+                  <label for="name" class="font-bold">Email</label>
+                    <input type="text" class="border-b p-1" name="email">
                     <template x-for="error in errors.email">
                         <span class="text-red-500" x-text="error"></span>
                     </template>
                     
                 </div>
                 <div class="grid">
-                    <input type="text" class="border-b p-1" name="password" placeholder="you password">
+                  <label for="name" class="font-bold">Password</label>
+                    <input type="password" class="border-b p-1" name="password">
                     <template x-for="error in errors.password">
                         <span class="text-red-500" x-text="error"></span>
                     </template>
