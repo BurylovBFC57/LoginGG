@@ -32,7 +32,7 @@
     </header>
     <main class="grid gap-y-8 py-8 px-2 md:px-[6%]">
       <h1 class="text-3xl font-bold">UserPanel</h1>
-      <section class="grid grid-cols-1 md:grid-cols-[1fr_3fr] gap-x-4 bg-cyan-100 p-4 border-2 border-cyan-500">
+      <section class="grid grid-cols-1 md:grid-cols-[1fr_3fr] gap-x-4 bg-cyan-100 p-4">
         <img x-bind:src="user.avatar" alt="" class="object-cover h-full w-full rounded-sm border-6 border-cyan-500">
         <ul class="self-center">
           <template x-for="(item,key) in user">
@@ -52,7 +52,7 @@
         errors: {},
         async createPost(){
           this.isCreate = !this.isCreate
-          if(this.isCreate){
+          if(this.isCreate == true){
             let response = await fetch(`https://test.informat74.ru/api/categories`)
             response = await response.json()
             this.categories = response.data
@@ -64,15 +64,17 @@
             method: 'POST',
             headers: {
               'Accept': 'application/json',
-              'Authorization': 'Bearer ${token}'
+              'Authorization': `Bearer ${this.token}`
             },
             body: new FormData($refs.form)
           })
 
           response = await response.json()
           console.log(response)
-          if(response.errors != error){
+          if(response.errors){
             this.posts = response.posts
+          }else{
+            this.isCreate = false
           }
 
         }
@@ -104,7 +106,7 @@
           <div class="grid">
             <label for="">
               <span>Published</span>
-              <input type="checkbox" name="is_published" checked class="h-5 w-5">
+              <input type="checkbox" name="is_published" value="1" checked class="h-5 w-5">
             </label>
             <template x-for="error in errors.is_published">
               <span class="text-red-500" x-text="error"></span>
