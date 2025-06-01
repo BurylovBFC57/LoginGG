@@ -36,7 +36,7 @@
         <img x-bind:src="user.avatar" alt="" class="object-cover h-full w-full rounded-sm border-6 border-cyan-500">
         <ul class="self-center">
           <template x-for="(item,key) in user">
-            <li class="flex gap-x-2" x-show="key != 'avatar'">
+            <li class="flex gap-x-2" x-show="(key != 'avatar') & (key != 'posts')">
               <h3 x-text="key" class="font-bold"></h3>
               <span x-text="item"></span>
             </li>
@@ -72,7 +72,7 @@
           response = await response.json()
           console.log(response)
           if(response.errors){
-            this.posts = response.posts
+            this.errors = response.errors
           }else{
             this.isCreate = false
           }
@@ -86,13 +86,13 @@
         <h2>Create Post</h2>
         <form x-ref="form" x-on:submit.prevent="savePost()" enctype="multipart/form-data">
           <div class="grid">
-            <input type="text" name="title" placeholder="title" class="border p-1">
+            <input type="text" name="title" placeholder="Title" class="border p-1">
             <template x-for="error in errors.title">
               <span class="text-red-500" x-text="error"></span>
           </template>
           </div>
           <div class="grid">
-            <textarea name="body" id="" class="border p-1"></textarea>
+            <textarea name="body" placeholder="Description" class="border p-1"></textarea>
             <template x-for="error in errors.body">
               <span class="text-red-500" x-text="error"></span>
           </template>
@@ -122,8 +122,8 @@
               </template>
             </select>
             <template x-for="error in errors.category_id">
-              <span class="text-red-500" x-text="error"></span>
-          </template>
+            <span class="text-red-500" x-text="error"></span>
+            </template>
           </div>
           <div class="grid">
             <button class="bg-cyan-500 text-white cursor-pointer p-2">Create Post</button>
