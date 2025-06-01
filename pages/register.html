@@ -79,8 +79,8 @@
             </div>
 
             <div class="grid">
-                <label for="avatar" class="font-bold cursor-pointer">Avatar</label>
-                <input class="border-b hidden " type="file" name="avatar" id="avatar">
+                <label for="avatar" class="font-bold cursor-pointer">Choose in avatar</label>
+                <input class="border-b hidden " type="file" name="avatar" id="avatar" accept="image/*">
                 <template x-for="error in errors.avatar">
                   <span class="text-red-400 text-sm" x-text="error"></span>
                 </template>

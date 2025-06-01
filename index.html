@@ -31,24 +31,31 @@
                 response = await response.json()
                 console.log(response.posts)
                 this.posts = response.posts
+            },
+            maxText(text, maxLength){
+                if(text.length > maxLength){
+                    return text.substring(0, maxLength) + '...';
+                }
+                return text;
             }
         }"
         >
         <button
-        x-on:click="download()"
-        class="bg-cyan-500 text-white cursor-pointer px-6 py-2">Download</button>
+        x-on:click="download()" class="bg-cyan-500 p-2 text-white rounded-md w-1/5 cursor-pointer">Download</button>
             <h2>All posts</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <template x-for="post in posts">
                 <article class="grid grid-rows-[auto_300px_1fr_auto] gap-y-2 bg-cyan-100 p-6 rounded">
                     <h3 class="text-xl font-bold" x-text="post.title"></h3>
-                    <img
-                    class="object-cover h-full w-full rounded"
-                    x-bind:src="post.image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4ur3wKSWN8qF56FAI4ey80HmIY1JaDpPf_g&s" alt="">
-                    <p x-text="post.body"></p>
-                    <div class="grid grid-cols-2">
-                        <p><span class="font-bold">User:</span> <span x-text="post.user"></span></p>
-                        <p class="justify-self-end"><span class="font-bold">Category:</span> <span></span></p>
+                    <img class="object-cover h-full w-full rounded p-2" x-bind:src="post.image" alt="">
+                    <p x-text="maxText(post.body, 250)" class="p-2"></p>
+                    <div class="grid grid-cols-[auto_auto] p-2">
+                        <span class="flex gap-1">
+                            <p class="font-bold">User:</p> <span x-text="post.user"></span>
+                        </span>
+                        <span class="flex justify-self-end gap-1">
+                            <p class="font-bold">Category:</p> <span x-text="post.category"></span>
+                        </span>
                     </div>
                 </article>                    
                 </template>
