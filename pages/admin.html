@@ -92,16 +92,16 @@
                     }
                 }"
                 >
-                    <h4 class="font-bold">All Users</h4>
+                    <h4 class="text-xl font-bold">All Users</h4>
                 <button
                 x-on:click="download()"
                 class="bg-cyan-500 text-white font-bold px-6 py-2 rounded cursor-pointer">Download</button>
                 <div>
                     <template x-for="user in users">
-                    <ul class="grid grid-cols-[80px_3fr_1fr_1fr] border-b-gray-400 p-2 items-center gap-x-6 grid-rows-[80px] border-b border-b-gray-300">
+                    <ul class="grid grid-cols-[85px_3fr_1fr_1fr] border-b-gray-400 p-2 items-center gap-x-6 grid-rows-[85px] border-b border-b-gray-300">
                         <li class="w-full h-full">
                             <img
-                            class="w-full h-full object-cover rounded-[100%]"
+                            class="w-full h-full object-cover rounded-[100%] border-3 border-cyan-500"
                             x-bind:src="user.avatar" alt="">
                         </li>
                         <li class="grid gap-y-2">
@@ -110,12 +110,13 @@
                         </li>
                         <li class="justify-self-end grid">
                             <span class="text-xl">Role: <span x-text="user.role"></span> </span>
-                            <span class="text-gray-600">Data create: 25.11.2024</span>
+                            <span class="text-gray-600">Date create: 03.06.2025</span>
+                            <span class="">ID: <span x-text="user.id"></span></span>
                         </li>
                         <li class="grid">
                             <button
                             x-show="user.role == 'user'"
-                            class="bg-cyan-500 text-white py-2 rounded-sm"
+                            class="bg-cyan-500 text-white py-2 rounded-sm cursor-pointer"
                             x-on:click="deleteUser(user.id)"
                             >Delete</button>
                         </li>

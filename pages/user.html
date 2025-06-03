@@ -80,12 +80,15 @@
 
         }
       }">
+      <div class="py-4">
         <button
         x-on:click="createPost()"
-        class="bg-cyan-500 text-white cursor-pointer p-2">Add Post</button>
-        <div x-show="isCreate" class="">
-        <h2>Create Post</h2>
-        <form x-ref="form" x-on:submit.prevent="savePost()" enctype="multipart/form-data">
+        class="bg-cyan-500 text-white cursor-pointer p-2 px-8 rounded-sm">Add Post</button>
+      </div>
+        
+        <div x-show="isCreate" class="border-4 border-cyan-500 rounded-sm p-4 bg-cyan-100 grid gap-y-2">
+        <h2 class="text-xl font-bold py-2">Create Post</h2>
+        <form x-ref="form" x-on:submit.prevent="savePost()" enctype="multipart/form-data" class="grid gap-y-2">
           <div class="grid">
             <input type="text" name="title" placeholder="Title" class="border p-1">
             <template x-for="error in errors.title">
@@ -99,7 +102,7 @@
           </template>
           </div>
           <div class="grid">
-            <input type="file" name="image" class="bg-cyan-500 text-white p-1">
+            <input type="file" name="image" class="bg-cyan-500 text-white p-1 rounded-sm">
             <template x-for="error in errors.image">
               <span class="text-red-500" x-text="error"></span>
           </template>
@@ -127,13 +130,13 @@
             </template>
           </div>
           <div class="grid">
-            <button class="bg-cyan-500 text-white cursor-pointer p-2">Create Post</button>
+            <button class="bg-cyan-500 text-white cursor-pointer p-2 rounded-sm">Create Post</button>
           </div>
         </form>          
         </div>
 
       </section>
-      <section class="border-2 border-cyan-500 p-4 rounded"
+      <section class="border-4 border-cyan-500 p-4 bg-cyan-100 rounded"
       x-data="{
         message: '',
         errors: {},
@@ -208,11 +211,11 @@
 
         }
       }"
-      class="border-2 border-cyan-500 p-4 rounded">
-        <h2 class="text-2xl font-bold">Uplate <span x-text="user.name"></span></h2>
+      class="border-4 border-cyan-500 p-4 bg-cyan-100 rounded">
+        <h2 class="text-2xl font-bold">Update <span x-text="user.name"></span></h2>
         <form
         x-on:submit.prevent="removeUser()"
-        x-ref="password"
+        x-ref="removeUser"
         class="grid gap-y-2">
         <div class="grid">
           <input type="text" class="border-b p-1" name="name" :value="user.name">
