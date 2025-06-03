@@ -64,7 +64,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <template x-for="post in posts">
                 <article class="grid grid-rows-[1fr_auto_1fr_1fr] gap-y-2 bg-cyan-100 p-6 rounded">
-                    <h3 class="text-xl font-bold" x-text="post.title"></h3>
+                    <h3 class="text-xl font-bold p-2" x-text="post.title"></h3>
                     <img class="object-cover h-full w-full rounded p-2" x-bind:src="post.image" alt="">
                     <p x-text="maxText(post.body, 250)" class="p-2"></p>
                     <div class="grid grid-cols-[auto_auto] p-2 items-end">

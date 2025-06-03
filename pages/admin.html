@@ -39,7 +39,7 @@
         <img x-bind:src="user.avatar" alt="" class="object-cover h-full w-full rounded-sm border-6 border-cyan-500">
         <ul class="self-center">
           <template x-for="(item,key) in user">
-            <li class="flex gap-x-2" x-show="key != 'avatar'">
+            <li class="flex gap-x-2" x-show="(key != 'avatar') & (key != 'posts')">
               <h3 x-text="key" class="font-bold"></h3>
               <span x-text="item"></span>
             </li>
@@ -75,7 +75,20 @@
                     async download(){
                         let response = await fetch(`${host}/users`)
                         response = await response.json()
+                        this.users = response.users
+                    },
+                    async deleteUser(id){
+                        let response = await fetch(`${host}/users/${id}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Accept': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                                }
+                            }
+                        )
+                        response = await response.json()
                         console.log(response)
+                        this.download()
                     }
                 }"
                 >
@@ -84,36 +97,31 @@
                 x-on:click="download()"
                 class="bg-cyan-500 text-white font-bold px-6 py-2 rounded cursor-pointer">Download</button>
                 <div>
-                    <ul class="grid grid-cols-4 border-b-gray-400 p-2 ">
-                        <li class="font-bold">id</li>
-                        <li class="font-bold">name</li>
-                        <li class="font-bold">email</li>
-                        <li class="font-bold">role</li>
-                    </ul>
-                    <ul class="grid grid-cols-4 p-2">
-                        <li>yrjtndfd</li>
-                        <li>namnxczdfe</li>
-                        <li>vxzsdf</li>
-                        <li>pzkdxjhgweg</li>
-                    </ul>
-                    <ul class="grid grid-cols-4 p-2 bg-cyan-100">
-                        <li>yrjtndfd</li>
-                        <li>namnxczdfe</li>
-                        <li>vxzsdf</li>
-                        <li>pzkdxjhgweg</li>
-                    </ul>
-                    <ul class="grid grid-cols-4 p-2">
-                        <li>yrjtndfd</li>
-                        <li>namnxczdfe</li>
-                        <li>vxzsdf</li>
-                        <li>pzkdxjhgweg</li>
-                    </ul>
-                    <ul class="grid grid-cols-4 p-2 bg-cyan-100">
-                        <li>yrjtndfd</li>
-                        <li>namnxczdfe</li>
-                        <li>vxzsdf</li>
-                        <li>pzkdxjhgweg</li>
-                    </ul>
+                    <template x-for="user in users">
+                    <ul class="grid grid-cols-[80px_3fr_1fr_1fr] border-b-gray-400 p-2 items-center gap-x-6 grid-rows-[80px] border-b border-b-gray-300">
+                        <li class="w-full h-full">
+                            <img
+                            class="w-full h-full object-cover rounded-[100%]"
+                            x-bind:src="user.avatar" alt="">
+                        </li>
+                        <li class="grid gap-y-2">
+                            <h3 class="text-xl font-bold" x-text="user.name">Name User</h3>
+                            <span class="text-gray-600" x-text="user.email"></span>
+                        </li>
+                        <li class="justify-self-end grid">
+                            <span class="text-xl">Role: <span x-text="user.role"></span> </span>
+                            <span class="text-gray-600">Data create: 25.11.2024</span>
+                        </li>
+                        <li class="grid">
+                            <button
+                            x-show="user.role == 'user'"
+                            class="bg-cyan-500 text-white py-2 rounded-sm"
+                            x-on:click="deleteUser(user.id)"
+                            >Delete</button>
+                        </li>
+                    </ul>                        
+                    </template>
+
                 </div>
                 </li>
                 <li

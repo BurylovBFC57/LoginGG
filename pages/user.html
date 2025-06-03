@@ -8,6 +8,7 @@
     <script src="../js/alpine.js" defer></script>
 </head>
 <body x-data="{
+  host: 'https://test.informat74.ru/api',
     user: JSON.parse(localStorage.getItem('user')) ,
     categories: [
       {id: 1, name: 'Category1'},
@@ -82,7 +83,7 @@
         <button
         x-on:click="createPost()"
         class="bg-cyan-500 text-white cursor-pointer p-2">Add Post</button>
-        <div x-show="isCreate">
+        <div x-show="isCreate" class="">
         <h2>Create Post</h2>
         <form x-ref="form" x-on:submit.prevent="savePost()" enctype="multipart/form-data">
           <div class="grid">
@@ -131,6 +132,113 @@
         </form>          
         </div>
 
+      </section>
+      <section class="border-2 border-cyan-500 p-4 rounded"
+      x-data="{
+        message: '',
+        errors: {},
+        async removePassword(){
+          let response = await fetch(`${host}/users/${this.user.id}/password`, {
+            method: 'POST',
+            headers: {
+              'Accept': 'application/json',
+              'Authorization': `Bearer ${this.token}`,
+            },
+            body: new FormData($refs.password)
+          })
+          if(response.status == '401'){
+            response = await response.json()
+            this.message = response.message
+          }
+          if(response.status == '400'){
+            response = await response.json()
+            this.errors = response.errors
+          }
+          else{
+            this.message = 'Пароль изменен'
+          }
+
+        }
+      }"
+      >
+        <h2 class="text-2xl font-bold">
+          Смена пароля
+        <span x-text="message" class="text-cyan-500"></span>
+        </h2>
+        <form
+        x-on:submit.prevent="removePassword()"
+        x-ref="password"
+        class="grid gap-y-2">
+        <div class="grid">
+          <input type="password" class="border-b p-1" name="password">
+          <template x-for="error in errors.password">
+            <span class="text-red-500" x-text="error"></span>
+          </template>
+          
+        </div>
+        <div class="grid">
+          <button class="bg-cyan-500 text-white p-2 rounded">Сменить пароль</button>
+        </div>
+        </form>
+      </section>
+      <section
+      x-data="{
+        message: '',
+        errors: {},
+        async removeUser(){
+          let response = await fetch(`${host}/users/${this.user.id}/password`, {
+            method: 'POST',
+            headers: {
+              'Accept': 'application/json',
+              'Authorization': `Bearer ${this.token}`,
+            },
+            body: new FormData($refs.password)
+          })
+          if(response.status == '401'){
+            response = await response.json()
+            this.message = response.message
+          }
+          if(response.status == '400'){
+            response = await response.json()
+            this.errors = response.errors
+          }
+          else{
+            this.message = 'Данные изменены'
+          }
+
+        }
+      }"
+      class="border-2 border-cyan-500 p-4 rounded">
+        <h2 class="text-2xl font-bold">Uplate <span x-text="user.name"></span></h2>
+        <form
+        x-on:submit.prevent="removeUser()"
+        x-ref="password"
+        class="grid gap-y-2">
+        <div class="grid">
+          <input type="text" class="border-b p-1" name="name" :value="user.name">
+          <template x-for="error in errors.name">
+            <span class="text-red-500" x-text="error"></span>
+          </template>
+          
+        </div>
+        <div class="grid">
+          <input type="text" class="border-b p-1" name="email" :value="user.email">
+          <template x-for="error in errors.email">
+            <span class="text-red-500" x-text="error"></span>
+          </template>
+          
+        </div>
+        <div class="grid">
+          <input type="file" class="border-b p-1" name="avatar">
+          <template x-for="error in errors.avatar">
+            <span class="text-red-500" x-text="error"></span>
+          </template>
+          
+        </div>
+        <div class="grid">
+          <button class="bg-cyan-500 text-white p-2 rounded">Сменить данные</button>
+        </div>
+      </form>
       </section>
     </main>
   </body>
