@@ -8,7 +8,7 @@
     <script src="js/alpine.js" defer></script>
 </head>
 <body x-data="">
-    <header class="grid grid-cols-[auto_1fr_auto] bg-cyan-500 text-white py-2 px-2 md:px-[6%]">
+    <header class="grid grid-cols-[auto_1fr_auto] bg-cyan-500 text-white py-4 px-2 md:px-[6%]">
         <a href="#">api<span class="font-bold">POST</span> </a>
         <nav class="justify-self-center space-x-6">
             <a href="pages/admin.html">Admin Panel</a>
@@ -64,8 +64,8 @@
             <ul class="flex gap-x-2 py-2">
                 <template x-for="item in funcPages()">
                     <li x-on:click="curentPage = item - 1" class=" font-bold text-2xl h-10 w-10 grid items-center justify-items-center 
-                    rounded-[100%] cursor-pointer hover:bg-white hover:border-2 hover:text-black"
-                    x-bind:class="curentPage == item - 1 ? 'bg-white border-2 text-cyan-500' : 'bg-cyan-500 text-white'"><span x-text="item - 1"></span></li>
+                    rounded-[100%] cursor-pointer hover:bg-white hover:border-2 hover:text-cyan-500"
+                    x-bind:class="curentPage == item - 1 ? 'bg-white border-2 text-cyan-800' : 'bg-cyan-500 text-white'"><span x-text="item - 1"></span></li>
                 </template>
             </ul>
 
@@ -78,7 +78,7 @@
                 </select>
             </div>
         </div>  
-            <h2 class="text-xl py-4">All posts</h2>
+            <h2 class="text-xl pb-2">All posts</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <template x-for="post in paginator(curentPage)">
                 <article class="grid grid-rows-[1fr_auto_1fr_1fr] gap-y-2 bg-cyan-100 p-6 rounded border-4 border-cyan-500">

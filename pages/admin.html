@@ -9,6 +9,8 @@
 </head>
 <body x-data="{
     host: 'https://test.informat74.ru/api',
+    isUsers: true,
+    isCategories: false,
     user: JSON.parse(localStorage.getItem('user')) ,
     token: localStorage.getItem('token'),
     logout(){
@@ -52,30 +54,34 @@
       </section>
         <section>
             <h2 class="text-2xl font-bold">Tabs</h2>
-            <ul class="flex gap-x-4">
+            <ul class="flex">
                 <li
                 x-on:click="funcIsUsers()"
-                class="text-xl font-bold cursor-pointer p-2 rounded"
-                x-bind:class="isUsers ? 'border border-b-white' : 'text-gray-400'"
+                class="text-xl font-bold cursor-pointer p-2 px-4 rounded"
+                x-bind:class="isUsers ? 'text-white bg-cyan-500' : 'text-black'"
                 >
                     <h3 class="text-xl font-bold cursor-pointer">Users</h3>
                 </li>
                 <li
                 x-on:click="funcIsCategories()"
-                class="text-xl font-bold cursor-pointer p-2 rounded"
-                x-bind:class="isCategories ? 'border border-b-white' : 'text-gray-400'"
+                class="text-xl font-bold cursor-pointer p-2 px-4 rounded"
+                x-bind:class="isCategories ? 'text-white bg-cyan-500' : 'text-black'"
                 >
                     <h3 class="text-xl font-bold cursor-pointer">Categories</h3>
                 </li>
             </ul>
-            <ul class="border p-2 rounded-sm">
+            <ul class="border-2 border-cyan-500 bg-cyan-100 p-2 rounded-sm">
                 <li x-show="isUsers" class="grid gap-y-6"
                 x-data="{
-                    users: {},
+                    count_users: 10,
+                    pages_users: 0,
+                    curentPageUsers: 0,
+                    users: [],
                     async download(){
                         let response = await fetch(`${host}/users`)
                         response = await response.json()
                         this.users = response.users
+                        console.log(response.users)
                     },
                     async deleteUser(id){
                         let response = await fetch(`${host}/users/${id}`, {
@@ -89,6 +95,17 @@
                         response = await response.json()
                         console.log(response)
                         this.download()
+                    },
+                    paginatorUsers(start) {
+                        return this.users.slice(start * this.count_users, start * this.count_users + this.count_users)
+
+                    },
+                    funcPagesUsers() {
+                        if(this.users.length % this.count_users !== 0) {
+                            return this.pages_users = Math.floor(this.users.length / this.count_users) + 1
+                        } else {
+                            return this.pages_users = Math.floor(this.users.length / this.count_users)
+                        }
                     }
                 }"
                 >
@@ -96,9 +113,27 @@
                 <button
                 x-on:click="download()"
                 class="bg-cyan-500 text-white font-bold px-6 py-2 rounded cursor-pointer">Download</button>
-                <div>
-                    <template x-for="user in users">
-                    <ul class="grid grid-cols-[85px_3fr_1fr_1fr] border-b-gray-400 p-2 items-center gap-x-6 grid-rows-[85px] border-b border-b-gray-300">
+                <div class="grid grid-cols-[1fr_auto]">
+                        <ul class="flex gap-x-2">
+                            <template x-for="item in funcPagesUsers()">
+                                <li x-on:click="curentPageUsers = item - 1" class=" font-bold text-2xl h-10 w-10 grid items-center justify-items-center 
+                                rounded-[100%] cursor-pointer hover:bg-white hover:border-2 hover:text-cyan-500"
+                                x-bind:class="curentPageUsers == item - 1 ? 'bg-white border-2 text-cyan-800' : 'bg-cyan-500 text-white'"><span x-text="item - 1"></span></li>
+                            </template>
+                        </ul>
+                        <div x-show="users.length > 0">
+                            <span>Количество записей при выводе:</span>
+                            <select name="" id="" x-model="count_users" class="border border-b-gray-300">
+                                <option value="10">10</option>
+                                <option value="20">20</option>
+                                <option value="30">30</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                    <template x-for="(user, key) in paginatorUsers(curentPageUsers)">
+                    <ul class="grid grid-cols-[90px_3fr_1fr_1fr] border-b-gray-400 p-2 items-center gap-x-6 grid-rows-[90px] border-b border-b-gray-300 hover:bg-gray-300"
+                    x-bind:class="(key+1)%2 == 1 ? 'bg-white' : ''">
                         <li class="w-full h-full">
                             <img
                             class="w-full h-full object-cover rounded-[100%] border-3 border-cyan-500"
@@ -130,7 +165,7 @@
                     count: 10,
                     pages: 0,
                     curentPage: 0,
-                    categories: {},
+                    categories: [],
                     async download(){
                         let response = await fetch(`${host}/categories`)
                         response = await response.json()
@@ -141,28 +176,30 @@
                         }else{
                             this.pages = Math.floor(this.categories.length / this.count)
                         }
-
-                        
                     },
-                    paginator(start){
-                        return this.categories.slice(start*this.count, start*this.count+this.count)
+                    paginator(start) {
+                        return this.categories.slice(start * this.count, start * this.count + this.count)
+                    },
+                    funcPages() {
+                        if(this.categories.length % this.count !== 0) {
+                            return this.pages = Math.floor(this.categories.length / this.count) + 1
+                        } else {
+                            return this.pages = Math.floor(this.categories.length / this.count)
+                        }
                     }
                 }"
                 x-show="isCategories" class="grid gap-y-6">
-                    <h4 class="font-bold">All Categories</h4>
+                    <h4 class="text-xl font-bold">All Categories</h4>
                 <button class="bg-cyan-500 text-white font-bold px-6 py-2 rounded cursor-pointer"
                 x-on:click="download()"
                 >Download</button>
                 <div class="grid grid-cols-[3fr_1fr]">
                     <ul class="flex gap-x-2">
-                        <template x-for="item in pages">
-                            <li
-                            x-on:click="curentPage = item-1"
-                            x-bind:class="curentPage == item - 1 ? 'border-2 bg-white text-cyan-500 ' : 'text-white bg-cyan-500'"
-                            class="text-2xl font-bold h-10 w-10 grid items-center justify-items-center rounded-[100%] cursor-pointer ">
-                                <span x-text="item-1"></span>
-                            </li>                            
-                        </template>
+                            <template x-for="item in funcPages()">
+                                <li x-on:click="curentPage = item - 1" class=" font-bold text-2xl h-10 w-10 grid items-center justify-items-center 
+                                rounded-[100%] cursor-pointer hover:bg-white hover:border-2 hover:text-cyan-500"
+                                x-bind:class="curentPage == item - 1 ? 'bg-white border-2 text-cyan-800' : 'bg-cyan-500 text-white'"><span x-text="item - 1"></span></li>
+                            </template>
                     </ul>
                         <div x-show="categories.length>0">
                     <span>Количество записей при выводе:</span>
@@ -179,10 +216,10 @@
                         <li class="font-bold">id</li>
                         <li class="font-bold">name</li>
                     </ul>
-                    <template x-for="(category, key) in paginator(curentPage)" x-bind:key="catefory.id">
+                    <template x-for="(category, key) in paginator(curentPage)">
                     <ul
-                    x-bind:class="(key+1)%2 == 0 ? 'bg-cyan-100' : ''"
-                    class="grid grid-cols-3 p-2 hover:text-white hover:bg-gray-500">
+                    x-bind:class="(key+1)%2 == 1 ? 'bg-white' : ''"
+                    class="grid grid-cols-3 p-2 hover:bg-gray-300">
                         <li x-text="key+1"></li>
                         <li x-text="category.id"></li>
                         <li x-text="category.name"></li>

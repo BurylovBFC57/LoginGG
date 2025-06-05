@@ -20,6 +20,22 @@
     logout(){
       localStorage.clear()
       location.assign('../index.html')
+    },
+    async viewPosts(){
+        let responce = await fetch(`https://test.informat74.ru/api/users/${this.user.id}`)
+        let result = await responce.json()
+        this.posts = result.user.posts
+    },
+    async deletePost(id){
+        let responce = await fetch(`https://test.informat74.ru/api/posts/${id}`, {
+            method: 'DELETE',
+            headers: {
+
+                Authorization: `Bearer ${this.token}`
+            }
+        })
+
+        this.viewPosts()
     }
   }">
     <header class="grid grid-cols-[auto_1fr_auto] bg-cyan-500 text-white py-2 px-2 md:px-[6%]">
@@ -90,13 +106,13 @@
         <h2 class="text-xl font-bold py-2">Create Post</h2>
         <form x-ref="form" x-on:submit.prevent="savePost()" enctype="multipart/form-data" class="grid gap-y-2">
           <div class="grid">
-            <input type="text" name="title" placeholder="Title" class="border p-1">
+            <input type="text" name="title" placeholder="Title" class="border-2 border-cyan-500 p-1 bg-white">
             <template x-for="error in errors.title">
               <span class="text-red-500" x-text="error"></span>
           </template>
           </div>
           <div class="grid">
-            <textarea name="body" placeholder="Description" class="border p-1"></textarea>
+            <textarea name="body" placeholder="Description" class="border-2 border-cyan-500 p-1 bg-white"></textarea>
             <template x-for="error in errors.body">
               <span class="text-red-500" x-text="error"></span>
           </template>
@@ -120,7 +136,7 @@
             <input type="text" name="user_id" x-bind:value="user.id" hidden>
           </div>
           <div class="grid">
-            <select name="category_id" class="border p-1">
+            <select name="category_id" class="border-2 border-cyan-500 p-1 bg-white">
               <template x-for="category in categories">
                 <option x-bind:value="category.id" x-text="category.name"></option>
               </template>
@@ -180,7 +196,7 @@
           
         </div>
         <div class="grid">
-          <button class="bg-cyan-500 text-white p-2 rounded">Сменить пароль</button>
+          <button class="bg-cyan-500 text-white p-2 rounded cursor-pointer">Сменить пароль</button>
         </div>
         </form>
       </section>
@@ -201,17 +217,32 @@
             localStorage.setItem('user', JSON.stringify(response.user) )
             JSON.parse(localStorage.getItem('user'))
             console.log(response)
+
+          if(response.status == '401'){
+            response = await response.json()
+            this.message = response.message
+          }
+          if(response.status == '400'){
+            response = await response.json()
+            this.errors = response.errors
+          }
+          else{
+            this.message = 'Данные изменены'
+          }
           }
 
       }"
       class="border-4 border-cyan-500 p-4 bg-cyan-100 rounded">
-        <h2 class="text-2xl font-bold">Update <span x-text="user.name"></span></h2>
+        <h2 class="text-2xl font-bold pb-2">Update <span x-text="user.name"></span>
+        <span x-text="message" class="text-cyan-500"></span>
+      </h2>
         <form
         x-on:submit.prevent="updateUser()"
         x-ref="update"
         enctype="multipart/form-data"
         class="grid gap-y-2">
         <div class="grid">
+          <label for="name" class="font-bold">Name</label>
           <input type="text" class="border-b p-1" name="name" :value="user.name">
           <template x-for="error in errors.name">
             <span class="text-red-500" x-text="error"></span>
@@ -219,6 +250,7 @@
           
         </div>
         <div class="grid">
+          <label for="name" class="font-bold">Email</label>
           <input type="text" class="border-b p-1" name="email" :value="user.email">
           <template x-for="error in errors.email">
             <span class="text-red-500" x-text="error"></span>
@@ -226,6 +258,7 @@
           
         </div>
         <div class="grid">
+          <label for="name" class="font-bold">Avatar</label>
           <input type="file" class="border-b p-1" name="avatar">
           <template x-for="error in errors.avatar">
             <span class="text-red-500" x-text="error"></span>
@@ -233,10 +266,28 @@
           
         </div>
         <div class="grid">
-          <button class="bg-cyan-500 text-white p-2 rounded">Сменить данные</button>
+          <button class="bg-cyan-500 text-white p-2 rounded cursor-pointer">Сменить данные</button>
         </div>
       </form>
       </section>
+        <button x-on:click="viewPosts()" class="bg-cyan-500 text-white p-2 cursor-pointer rounded">View My Posts</button>
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <template x-for="post in posts">
+                <article class="grid grid-rows-[1fr_auto_1fr_1fr] gap-y-2 bg-cyan-100 p-6 rounded border-4 border-cyan-500">
+                    <h3 class="text-xl font-bold p-2" x-text="post.title"></h3>
+
+                    <img class="object-cover h-full w-full rounded p-2"
+                    x-bind:src="post.image" alt="">
+
+                    <p x-text="post.body" class="p-2"></p>
+
+                    <div class="grid grid-cols-[auto_auto] p-2 items-end">
+                        <p><span class="font-bold">Category:</span> <span x-text="post.category"></span></p>
+                    </div>
+                    <button x-on:click="deletePost(post.id)" class="bg-red-500 text-white p-2 cursor-pointer rounded">Delete Post</button>
+                </article>
+            </template>
+        </section>
     </main>
   </body>
   </html>
