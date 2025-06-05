@@ -45,24 +45,42 @@
             count: 10,
             pages: 0,
             curentPage: 0,
-            loadPage(page){
-                return this.post.slice(page*this.count+1, this.count)
+            paginator(start) {
+                return this.posts.slice(start * this.count, start * this.count + this.count)
+
             },
-            funCurentPage(page){
-                this.curentPage = page
-            }
+            funcPages() {
+                if(this.posts.length % this.count !== 0) {
+                    return this.pages = Math.floor(this.posts.length / this.count) + 1
+                } else {
+                    return this.pages = Math.floor(this.posts.length / this.count)
+                }
+            }  
         }"
         >
         <button
         x-on:click="download()" class="grid bg-cyan-500 p-2 text-white rounded-md w-1/3 cursor-pointer">Download</button>
-        <ul class="flex gap-x-4 justify-self-center">
-            <template x-for="(page, index) in pages">
-                <li x-show="funCurentPage(index)" class="p-2 bg-cyan-500 rounded cursor-pointer text-white" x-text="index"></li>
-            </template>
-        </ul>
+        <div class="grid grid-cols-[1fr_auto]">
+            <ul class="flex gap-x-2 py-2">
+                <template x-for="item in funcPages()">
+                    <li x-on:click="curentPage = item - 1" class=" font-bold text-2xl h-10 w-10 grid items-center justify-items-center 
+                    rounded-[100%] cursor-pointer hover:bg-white hover:border-2 hover:text-black"
+                    x-bind:class="curentPage == item - 1 ? 'bg-white border-2 text-cyan-500' : 'bg-cyan-500 text-white'"><span x-text="item - 1"></span></li>
+                </template>
+            </ul>
+
+            <div x-show="posts.length > 0">
+                <span>Количество записей при выводе:</span>
+                <select name="" id="" x-model="count" class="border border-b-gray-300">
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="30">30</option>
+                </select>
+            </div>
+        </div>  
             <h2 class="text-xl py-4">All posts</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <template x-for="post in posts">
+                <template x-for="post in paginator(curentPage)">
                 <article class="grid grid-rows-[1fr_auto_1fr_1fr] gap-y-2 bg-cyan-100 p-6 rounded border-4 border-cyan-500">
                     <h3 class="text-xl font-bold p-2" x-text="post.title"></h3>
                     <img class="object-cover h-full w-full rounded p-2" x-bind:src="post.image" alt="">
